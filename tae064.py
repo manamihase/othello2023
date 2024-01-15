@@ -198,7 +198,7 @@ def game(player1: OthelloAI, player2: OthelloAI,N=6):
             break
     comment(player1, player2, board)
 
-class MiniMaxAI(OthelloAI):
+class tae(OthelloAI):
     def __init__(self, face, name):
         self.face = face
         self.name = name
