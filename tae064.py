@@ -201,7 +201,7 @@ def game(player1: OthelloAI, player2: OthelloAI,N=6):
 class taeAI(OthelloAI):
     def __init__(self, face, name):
         self.face = '⛄'
-        self.name = テヒョン
+        self.name = 'テヒョン'
 
     def __repr__(self):
         return f"{self.face}{self.name}"
