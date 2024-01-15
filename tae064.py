@@ -151,7 +151,7 @@ class OthelloAI(object):
             return 'がーん'
 
 class taeAI(OthelloAI):
-    def __init__(self, face, name):
+    def __init__(self):
         self.face = '⛄'
         self.name = 'テヒョン'
 
@@ -213,7 +213,7 @@ class taeAI(OthelloAI):
         return count_board(board, piece)
 
 class OchibiAI(OthelloAI):
-    def __init__(self, face, name):
+    def __init__(self):
         self.face = '👶'
         self.name = 'ちび'
 
