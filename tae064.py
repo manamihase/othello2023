@@ -214,8 +214,8 @@ class taeAI(OthelloAI):
 
 class OchibiAI(OthelloAI):
     def __init__(self, face, name):
-        self.face = face
-        self.name = name
+        self.face = '👶'
+        self.name = 'ちび'
 
     def move(self, board: np.array, piece: int)->tuple[int, int]:
         valid_moves = get_valid_moves(board, piece)
