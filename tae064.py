@@ -168,6 +168,7 @@ class taeAI(OthelloAI):
         _, best_move = self.negamax(board, piece, self.depth, -float('inf'), float('inf'))
         return best_move
 
+
     def choose_corner_move(self, board, piece):
         corner_moves = [(0, 0), (0, len(board) - 1), (len(board) - 1, 0), (len(board) - 1, len(board) - 1)]
         valid_corner_moves = [move for move in corner_moves if is_valid_move(board, move[0], move[1], piece)]
@@ -187,12 +188,6 @@ class taeAI(OthelloAI):
                   valid_moves.append((r, c))
 
       return valid_moves
-
-    def move(self, board: np.array, piece: int) -> tuple[int, int]:
-        _, move = self.minimax(board, piece, depth=3, alpha=float('-inf'), beta=float('inf'))
-        return move
-
-
 
     def minimax(self, board, piece, depth, alpha, beta):
         if depth == 0 or len(get_valid_moves(board, piece)) == 0:
