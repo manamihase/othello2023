@@ -154,19 +154,51 @@ class taeAI(OthelloAI):
     def __init__(self):
         self.face = '⛄'
         self.name = 'テヒョン'
-
+        self.prioritize_corners = True
+        self.dept=3
     def __repr__(self):
         return f"{self.face}{self.name}"
-        
+
+    def move(self, board: np.array, piece: int) -> tuple[int, int]:
+        if self.prioritize_corners:
+            corner_move = self.choose_corner_move(board, piece)
+            if corner_move:
+                return corner_move
+
+        _, best_move = self.negamax(board, piece, self.depth, -float('inf'), float('inf'))
+        return best_move
+
+    def choose_corner_move(self, board, piece):
+        corner_moves = [(0, 0), (0, len(board) - 1), (len(board) - 1, 0), (len(board) - 1, len(board) - 1)]
+        valid_corner_moves = [move for move in corner_moves if is_valid_move(board, move[0], move[1], piece)]
+
+        if valid_corner_moves:
+            return random.choice(valid_corner_moves)
+        return None
+
+
+    def get_valid_moves(board, player):
+      valid_moves = []
+
+      for r, c in all_positions(board):
+          if board[r, c] == 0 and is_valid_move(board, r, c, player):
+              # Check if the move is not in the corners or their immediate neighbors
+              if (r, c) not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
+                  valid_moves.append((r, c))
+
+      return valid_moves
+
     def move(self, board: np.array, piece: int) -> tuple[int, int]:
         _, move = self.minimax(board, piece, depth=3, alpha=float('-inf'), beta=float('inf'))
         return move
 
+
+
     def minimax(self, board, piece, depth, alpha, beta):
-        if depth == 0 or len(self.get_valid_moves(board, piece)) == 0:
+        if depth == 0 or len(get_valid_moves(board, piece)) == 0:
             return self.evaluate(board, piece), None
 
-        valid_moves = self.get_valid_moves(board, piece)
+        valid_moves = get_valid_moves(board, piece)
         best_move = None
 
         if piece == BLACK:  # Maximizing player (AI)
@@ -196,18 +228,9 @@ class taeAI(OthelloAI):
                     break  # Alpha cut-off
             return min_eval, best_move
 
-    def get_valid_moves(self, board, player):
-        N = len(board)
-        valid_moves = []
-
-        for r, c in all_positions(board):
-            if board[r, c] == 0 and is_valid_move(board, r, c, player):
-                # Check if the move is not in the corners or their immediate neighbors
-                if (r, c) not in [(0, 0), (0, 1), (1, 0), (0, N-1), (0, N-2), (1, N-1), (N-1, 0), (N-1, 1), (N-2, 0), (N-1, N-1), (N-1, N-2), (N-2, N-1)]:
-                    valid_moves.append((r, c))
-
-        return valid_moves
-
+    def evaluate(self, board, piece):
+        # Simple evaluation function (number of pieces)
+        return count_board(board, piece)
 
 class OchibiAI(OthelloAI):
     def __init__(self):
