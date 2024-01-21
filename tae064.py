@@ -165,9 +165,8 @@ class taeAI(OthelloAI):
             if corner_move:
                 return corner_move
 
-        _, best_move = self.negamax(board, piece, self.depth, -float('inf'), float('inf'))
-        return best_move
-
+        _, move = self.minimax(board, piece, depth=3, alpha=float('-inf'), beta=float('inf'))
+        return move
 
     def choose_corner_move(self, board, piece):
         corner_moves = [(0, 0), (0, len(board) - 1), (len(board) - 1, 0), (len(board) - 1, len(board) - 1)]
