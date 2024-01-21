@@ -164,9 +164,18 @@ class taeAI(OthelloAI):
             corner_move = self.choose_corner_move(board, piece)
             if corner_move:
                 return corner_move
+      valid_moves = []
+
+      for r, c in all_positions(board):
+          if board[r, c] == 0 and is_valid_move(board, r, c, player):
+              # Check if the move is not in the corners or their immediate neighbors
+              if (r, c) not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
+                  valid_moves.append((r, c))
 
         _, move = self.minimax(board, piece, depth=3, alpha=float('-inf'), beta=float('inf'))
-        return move
+        if move not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
+            return move
+        return valid_moves[0]
 
     def choose_corner_move(self, board, piece):
         corner_moves = [(0, 0), (0, len(board) - 1), (len(board) - 1, 0), (len(board) - 1, len(board) - 1)]
