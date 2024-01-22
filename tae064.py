@@ -167,7 +167,7 @@ class taeAI(OthelloAI):
         valid_moves = []
 
         for r, c in all_positions(board):
-            if board[r, c] == 0 and is_valid_move(board, r, c, player):
+            if board[r, c] == 0 and is_valid_move(board, r, c, piece):
                 # Check if the move is not in the corners or their immediate neighbors
                 if (r, c) not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
                     valid_moves.append((r, c))
