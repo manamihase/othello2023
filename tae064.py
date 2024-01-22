@@ -5,18 +5,19 @@ import time
 import os
 import random
 
-BLACK = -1
-WHITE = 1
-EMPTY = 0
+BLACK = -1  # 黒
+WHITE = 1   # 白
+EMPTY = 0   # 空
+
+
+
 
 def init_board(N:int=8):
-    # Initialize the board with an 8x8 numpy array
     """
-    引数でnを取ってボードを初期化
-    N:ボードの大きさ（N=８が標準）
+    ボードを初期化する
+    N: ボードの大きさ　(N=8がデフォルト値）
     """
     board = np.zeros((N, N), dtype=int)
-    # Set up the initial four stones
     C0 = N//2
     C1 = C0-1
     board[C1, C1], board[C0, C0] = WHITE, WHITE  # White
@@ -36,6 +37,12 @@ stone_codes = [
     f'{BG_EMPTY}⚪️{BG_RESET}',
 ]
 
+# stone_codes = [
+#     f'黒',
+#     f'・',
+#     f'白',
+# ]
+
 def stone(piece):
     return stone_codes[piece+1]
 
@@ -48,8 +55,7 @@ WHITE_NAME=''
 
 def display_board(board, clear=True, sleep=0, black=None, white=None):
     """
-    オセロボードを表示する。
-    Display the Othello board with emoji representations.
+    オセロ盤を表示する
     """
     global BLACK_NAME, WHITE_NAME
     if clear:
@@ -150,105 +156,19 @@ class OthelloAI(object):
         else:
             return 'がーん'
 
-class taeAI(OthelloAI):
-    def __init__(self):
-        self.face = '⛄'
-        self.name = 'テヒョン'
-        self.prioritize_corners = True
-        self.dept=3
-    def __repr__(self):
-        return f"{self.face}{self.name}"
-
-    def move(self, board: np.array, piece: int) -> tuple[int, int]:
-        if self.prioritize_corners:
-            corner_move = self.choose_corner_move(board, piece)
-            if corner_move:
-                return corner_move
-        valid_moves = []
-
-        for r, c in all_positions(board):
-            if board[r, c] == 0 and is_valid_move(board, r, c, piece):
-                # Check if the move is not in the corners or their immediate neighbors
-                if (r, c) not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
-                    valid_moves.append((r, c))
-
-        _, move = self.minimax(board, piece, depth=3, alpha=float('-inf'), beta=float('inf'))
-        if move not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
-            return move
-        return valid_moves[0]
-
-    def choose_corner_move(self, board, piece):
-        corner_moves = [(0, 0), (0, len(board) - 1), (len(board) - 1, 0), (len(board) - 1, len(board) - 1)]
-        valid_corner_moves = [move for move in corner_moves if is_valid_move(board, move[0], move[1], piece)]
-
-        if valid_corner_moves:
-            return random.choice(valid_corner_moves)
-        return None
 
 
-    def get_valid_moves(board, player):
-      valid_moves = []
-
-      for r, c in all_positions(board):
-          if board[r, c] == 0 and is_valid_move(board, r, c, player):
-              # Check if the move is not in the corners or their immediate neighbors
-              if (r, c) not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
-                  valid_moves.append((r, c))
-
-      return valid_moves
-
-    def minimax(self, board, piece, depth, alpha, beta):
-        if depth == 0 or len(get_valid_moves(board, piece)) == 0:
-            return self.evaluate(board, piece), None
-
-        valid_moves = get_valid_moves(board, piece)
-        best_move = None
-
-        if piece == BLACK:  # Maximizing player (AI)
-            max_eval = float('-inf')
-            for move in valid_moves:
-                new_board = board.copy()
-                flip_stones(new_board, move[0], move[1], piece)
-                eval, _ = self.minimax(new_board, -piece, depth - 1, alpha, beta)
-                if eval > max_eval:
-                    max_eval = eval
-                    best_move = move
-                alpha = max(alpha, eval)
-                if beta <= alpha:
-                    break  # Beta cut-off
-            return max_eval, best_move
-        else:  # Minimizing player (Human)
-            min_eval = float('inf')
-            for move in valid_moves:
-                new_board = board.copy()
-                flip_stones(new_board, move[0], move[1], piece)
-                eval, _ = self.minimax(new_board, -piece, depth - 1, alpha, beta)
-                if eval < min_eval:
-                    min_eval = eval
-                    best_move = move
-                beta = min(beta, eval)
-                if beta <= alpha:
-                    break  # Alpha cut-off
-            return min_eval, best_move
-
-    def evaluate(self, board, piece):
-        # Simple evaluation function (number of pieces)
-        return count_board(board, piece)
-
-class OchibiAI(OthelloAI):
-    def __init__(self):
-        self.face = '👶'
-        self.name = 'ちび'
-
-    def move(self, board: np.array, piece: int)->tuple[int, int]:
-        valid_moves = get_valid_moves(board, piece)
-        return valid_moves[0]
-
+import traceback
 
 def board_play(player: OthelloAI, board, piece: int):
+    skip_count=0
     display_board(board, sleep=0)
     if len(get_valid_moves(board, piece)) == 0:
         print(f"{player}は、置けるところがありません。スキップします。")
+        skip_count+=1
+        print(f"終了まで：{6-skip_count}手")
+        if(skip_count>6):
+            exit()
         return True
     try:
         start_time = time.time()
@@ -256,6 +176,7 @@ def board_play(player: OthelloAI, board, piece: int):
         end_time = time.time()
     except:
         print(f"{player.face}{player.name}は、エラーを発生させました。反則まけ")
+        traceback.print_exc()
         return False
     if not is_valid_move(board, r, c, piece):
         print(f"{player}が返した({r},{c})には、置けません。反則負け。")
@@ -282,3 +203,56 @@ def game(player1: OthelloAI, player2: OthelloAI,N=6):
         if not board_play(player2, board, WHITE):
             break
     comment(player1, player2, board)
+
+class OchibiAI(OthelloAI):
+    def __init__(self, face, name):
+        self.face = face
+        self.name = name
+
+    def move(self, board: np.array, piece: int)->tuple[int, int]:
+        valid_moves = get_valid_moves(board, piece)
+        return valid_moves[0]
+
+class taeAI(OthelloAI):
+    def __init__(self,depth=7):
+        self.face = '⛄'
+        self.name = 'テヒョン'
+        self.depth = depth
+
+    def move(self, board: np.array, piece: int) -> tuple[int, int]:
+        _, best_move = self.negamax(board, piece, self.depth, -float('inf'), float('inf'))
+        if best_move not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
+            return best_move
+        return best_move
+
+    def negamax(self, board, piece, depth, alpha, beta):
+        if depth == 0 or not get_valid_moves(board, piece):
+            return self.evaluate(board, piece), None
+
+        max_eval = -float('inf')
+        best_move = None
+
+        for move in get_valid_moves(board, piece):
+            new_board = board.copy()
+            new_board[move] = piece
+            flipped_stones = flip_stones(new_board, *move, piece)
+            for r, c in flipped_stones:
+                new_board[r, c] = piece
+
+            eval_, _ = self.negamax(new_board, -piece, depth - 1, -beta, -alpha)
+            eval_ = -eval_
+
+            if eval_ > max_eval:
+                max_eval = eval_
+                best_move = move
+
+            alpha = max(alpha, eval_)
+            if alpha >= beta:
+                break
+
+        return max_eval, best_move
+
+    def evaluate(self, board, piece):
+        # Implement your board evaluation function
+        # This is a placeholder; you should replace it with your evaluation logic
+        return count_board(board, piece) - count_board(board, -piece)
