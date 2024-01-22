@@ -221,8 +221,6 @@ class Cat12345(OthelloAI):
 
     def move(self, board: np.array, piece: int) -> tuple[int, int]:
         _, best_move = self.negamax(board, piece, self.depth, -float('inf'), float('inf'))
-        if best_move not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
-            return best_move
         return best_move
 
     def negamax(self, board, piece, depth, alpha, beta):
