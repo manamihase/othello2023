@@ -213,20 +213,17 @@ class OchibiAI(OthelloAI):
         valid_moves = get_valid_moves(board, piece)
         return valid_moves[0]
 
-class taeAI(OthelloAI):
+class Cat12345(OthelloAI):
     def __init__(self,depth=7):
         self.face = '⛄'
         self.name = 'テヒョン'
+        
         self.depth = depth
 
     def move(self, board: np.array, piece: int) -> tuple[int, int]:
-        
         _, best_move = self.negamax(board, piece, self.depth, -float('inf'), float('inf'))
-        for r, c in all_positions(board):
-            if board[r, c] == 0 and is_valid_move(board, r, c, player):
-                # Check if the move is not in the corners or their immediate neighbors
-                if (r, c) not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
-                    best_move.append((r, c))
+        if best_move not in [(0, 1), (1, 0), (1, 1), (0, 6), (1, 6), (1, 7), (7, 1), (6, 0), (6, 1), (7, 6), (6, 6), (6, 7)]:
+            return move
         return best_move
 
     def negamax(self, board, piece, depth, alpha, beta):
