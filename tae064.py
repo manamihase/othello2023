@@ -214,7 +214,7 @@ class OchibiAI(OthelloAI):
         valid_moves = get_valid_moves(board, piece)
         return valid_moves[0]
 
-class Cat12345(OthelloAI):
+class taeAI(OthelloAI):
     def __init__(self,depth=7):
         self.face = '⛄'
         self.name = 'テヒョン'
